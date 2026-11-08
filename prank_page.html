@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡ACCESO COMPROMETIDO!</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti para el final -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Poppins:wght@400;600;800&display=swap');
+
+        body {
+            font-family: 'Fira Code', monospace;
+            background-color: #0d1117;
+            color: #00ff66;
+            overflow-x: hidden;
+        }
+
+        .hacker-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .funny-font {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Scanline effect */
+        .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0, 0, 0, 0.3) 50%,
+                rgba(0, 0, 0, 0.3)
+            );
+            background-size: 100% 4px;
+        }
+
+        /* Glitch Animation */
+        .glitch {
+            position: relative;
+            animation: glitch 1s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        /* Pulse glow animation */
+        .glow {
+            text-shadow: 0 0 10px #00ff66, 0 0 20px #00ff66, 0 0 30px #00ff66;
+        }
+
+        /* Matrix rain background canvas */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            opacity: 0.25;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 relative scanlines select-none">
+
+    <!-- Canvas de Matrix de Fondo -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <!-- Tarjeta Principal de la Broma -->
+    <main class="relative z-10 w-full max-w-xl bg-gray-900/90 border-2 border-emerald-500/50 rounded-2xl p-6 sm:p-10 shadow-[0_0_50px_rgba(0,255,102,0.2)] backdrop-blur-md transition-all duration-500 text-center">
+        
+        <!-- Estado Prank (Inicial) -->
+        <div id="prankSection" class="space-y-6">
+            <!-- Icono Hack -->
+            <div class="inline-block p-4 rounded-full bg-emerald-950/60 border border-emerald-500/40 animate-bounce">
+                <i class="fa-solid fa-user-ninja text-5xl text-emerald-400"></i>
+            </div>
+
+            <!-- Terminal Simulado -->
+            <div class="bg-black/70 rounded-lg p-3 text-left border border-emerald-900 text-xs text-emerald-400/80 space-y-1 font-mono">
+                <p>> System override initialized...</p>
+                <p>> Downloading extra_brain_cells.exe [0%]</p>
+                <p class="text-yellow-400">> WARNING: High levels of sillyness detected!</p>
+            </div>
+
+            <!-- Titulo Broma -->
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-emerald-400 glitch glow tracking-tight uppercase">
+                ¡Te han hackeado! <br>
+                <span class="text-emerald-300 text-2xl sm:text-3xl lowercase">jajajaja ¡qué tonto! 😜</span>
+            </h1>
+
+            <p class="text-gray-400 text-sm sm:text-base">
+                Todos tus datos han sido reemplazados por fotos de gatitos bailando. 🐱🕺
+            </p>
+
+            <!-- Botón Revelar -->
+            <div class="pt-4">
+                <button onclick="revealJoke()" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-gray-950 font-bold rounded-xl shadow-lg shadow-emerald-500/30 transform hover:-translate-y-1 active:translate-y-0 transition-all duration-200 text-lg cursor-pointer">
+                    <i class="fa-solid fa-shield-cat mr-2"></i> ¡Recuperar mi sistema!
+                </button>
+            </div>
+        </div>
+
+        <!-- Estado Revelación (Oculto al inicio) -->
+        <div id="revealSection" class="hidden space-y-6 animate-fade-in funny-font">
+            <div class="text-6xl animate-bounce">
+                🥳🤣🎉
+            </div>
+
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-yellow-400 tracking-wide">
+                ¡Es una broma! 😂
+            </h2>
+
+            <p class="text-gray-200 text-lg leading-relaxed">
+                Tranqui, tu compu y tus archivos están intactos. <br>
+                ¡Solo quería sacarte una sonrisa! 😄
+            </p>
+
+            <div class="p-4 bg-white/5 rounded-xl border border-white/10 text-emerald-300 text-sm">
+                <p class="font-semibold"><i class="fa-solid fa-heart text-red-500 mr-1"></i> Sin rencores, ¿eh?</p>
+            </div>
+
+            <button onclick="resetPrank()" class="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs rounded-lg transition-colors border border-gray-700">
+                <i class="fa-solid fa-rotate-left mr-1"></i> Volver a jugar
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer discreto -->
+    <footer class="fixed bottom-3 text-center text-xs text-gray-600 z-10">
+        Modo broma inofensiva • Creado para reír un rato
+    </footer>
+
+    <!-- Lógica de Matrix y Revelación -->
+    <script>
+        // Animación Matrix Canvas
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const characters = '0123456789ABCDEFHAHAHA';
+        const fontSize = 14;
+        let columns = Math.floor(canvas.width / fontSize);
+        let drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(13, 17, 23, 0.08)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff66';
+            ctx.font = fontSize + 'px monospace';
+
+            drops.forEach((y, index) => {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                const x = index * fontSize;
+                ctx.fillText(text, x, y * fontSize);
+
+                if (y * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[index] = 0;
+                }
+                drops[index]++;
+            });
+        }
+
+        setInterval(drawMatrix, 33);
+
+        // Lógica de la broma
+        function revealJoke() {
+            const prank = document.getElementById('prankSection');
+            const reveal = document.getElementById('revealSection');
+
+            prank.classList.add('hidden');
+            reveal.classList.remove('hidden');
+
+            // Disparar confeti
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        function resetPrank() {
+            document.getElementById('prankSection').classList.remove('hidden');
+            document.getElementById('revealSection').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
